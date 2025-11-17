@@ -1,0 +1,25 @@
+meta {
+  name: get-user-by-id
+  type: http
+  seq: 20
+}
+
+get {
+  url: https://jsonplaceholder.typicode.com/users/1
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  
+  
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
