@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental - W3C (World Wide Web Consortium)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #005a9c;
+            --secondary-color: #0078d4;
+            --accent-color: #ff6b35;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --bg-color: #f0f4f8;
+            --text-color: #333;
+            --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .mind-map {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            position: relative;
+        }
+
+        /* Nodo Central */
+        .central-node {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem;
+            border-radius: 50%;
+            text-align: center;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(0, 90, 156, 0.4);
+            animation: pulse 2s infinite;
+            position: relative;
+        }
+
+        .central-node h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .central-node p {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 15px 35px rgba(0, 90, 156, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 20px 45px rgba(0, 90, 156, 0.6);
+            }
+        }
+
+        /* Ramas principales */
+        .branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .branch {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .branch:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .branch.definicion { border-color: var(--accent-color); }
+        .branch.mision { border-color: var(--success-color); }
+        .branch.estandares { border-color: var(--warning-color); }
+        .branch.participantes { border-color: var(--info-color); }
+        .branch.importancia { border-color: var(--secondary-color); }
+
+        .branch-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .branch-icon {
+            font-size: 2.5rem;
+        }
+
+        .branch h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .branch-content {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .branch-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .branch-content li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .branch-content li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .highlight-box h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-card .label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .timeline {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .timeline h3 {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+        }
+
+        .timeline-year {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            min-width: 100px;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-content h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .central-node {
+                width: 250px;
+                height: 250px;
+                padding: 2rem;
+            }
+
+            .central-node h2 {
+                font-size: 2rem;
+            }
+
+            .branches {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        .interactive-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 120, 212, 0.3);
+        }
+
+        .interactive-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 120, 212, 0.4);
+        }
+
+        .connection-line {
+            position: absolute;
+            background: var(--secondary-color);
+            height: 2px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 Mapa Mental: W3C</h1>
+            <p>World Wide Web Consortium - Los Estándares de la Web</p>
+        </header>
+
+        <div class="mind-map">
+            <!-- Nodo Central -->
+            <div class="central-node">
+                <h2>W3C</h2>
+                <p>World Wide Web Consortium</p>
+                <small>Fundado en 1994 por Tim Berners-Lee</small>
+            </div>
+
+            <!-- Ramas Principales -->
+            <div class="branches">
+                <!-- 1. ¿Qué es la W3C? -->
+                <div class="branch definicion">
+                    <div class="branch-title">
+                        <span class="branch-icon">🌐</span>
+                        <h3>¿Qué es la W3C?</h3>
+                    </div>
+                    <div class="branch-content">
+                        <p><strong>Definición:</strong></p>
+                        <p>La W3C (World Wide Web Consortium) es una organización internacional que desarrolla estándares para garantizar el crecimiento a largo plazo de la Web.</p>
+                        <br>
+                        <p><strong>Características clave:</strong></p>
+                        <ul>
+                            <li>Organización sin fines de lucro</li>
+                            <li>Comunidad internacional</li>
+                            <li>Desarrolla protocolos y directrices</li>
+                            <li>Garantiza interoperabilidad web</li>
+                            <li>Fundada el 1 de octubre de 1994</li>
+                        </ul>
+                        <br>
+                        <p><strong>Fundador:</strong> Tim Berners-Lee (inventor de la World Wide Web)</p>
+                    </div>
+                </div>
+
+                <!-- 2. Misión de la W3C -->
+                <div class="branch mision">
+                    <div class="branch-title">
+                        <span class="branch-icon">🎯</span>
+                        <h3>Misión de la W3C</h3>
+                    </div>
+                    <div class="branch-content">
+                        <p><strong>Objetivo principal:</strong></p>
+                        <p>"Llevar la World Wide Web a su máximo potencial desarrollando protocolos y pautas que aseguren el crecimiento a largo plazo de la Web"</p>
+                        <br>
+                        <p><strong>Pilares fundamentales:</strong></p>
+                        <ul>
+                            <li><strong>Interoperabilidad:</strong> Los sitios web deben funcionar en cualquier navegador</li>
+                            <li><strong>Accesibilidad:</strong> La web debe ser accesible para todos, incluidas personas con discapacidades</li>
+                            <li><strong>Usabilidad:</strong> Facilitar el uso de la web para todos los usuarios</li>
+                            <li><strong>Apertura:</strong> Estándares abiertos y gratuitos</li>
+                            <li><strong>Internacionalización:</strong> Soporte para todos los idiomas y culturas</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 3. Estándares que desarrolla -->
+                <div class="branch estandares">
+                    <div class="branch-title">
+                        <span class="branch-icon">📋</span>
+                        <h3>Estándares que Desarrolla</h3>
+                    </div>
+                    <div class="branch-content">
+                        <p><strong>Tecnologías web principales:</strong></p>
+                        <ul>
+                            <li><strong>HTML:</strong> Lenguaje de marcado para estructurar contenido web</li>
+                            <li><strong>CSS:</strong> Hojas de estilo en cascada para diseño visual</li>
+                            <li><strong>XML:</strong> Lenguaje de marcado extensible</li>
+                            <li><strong>SVG:</strong> Gráficos vectoriales escalables</li>
+                            <li><strong>DOM:</strong> Modelo de Objeto del Documento</li>
+                            <li><strong>WCAG:</strong> Pautas de Accesibilidad al Contenido Web</li>
+                            <li><strong>ARIA:</strong> Aplicaciones de Internet Ricas Accesibles</li>
+                            <li><strong>WebAssembly:</strong> Código binario para la web</li>
+                            <li><strong>Web APIs:</strong> Interfaces de programación</li>
+                        </ul>
+                        <br>
+                        <p><strong>Áreas de trabajo:</strong></p>
+                        <ul>
+                            <li>Semántica web</li>
+                            <li>Web móvil</li>
+                            <li>Privacidad y seguridad</li>
+                            <li>Web de las cosas (IoT)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 4. Participantes -->
+                <div class="branch participantes">
+                    <div class="branch-title">
+                        <span class="branch-icon">👥</span>
+                        <h3>¿Quiénes Participan?</h3>
+                    </div>
+                    <div class="branch-content">
+                        <p><strong>Tipos de miembros:</strong></p>
+                        <ul>
+                            <li><strong>Empresas tecnológicas:</strong> Google, Microsoft, Apple, Mozilla, IBM</li>
+                            <li><strong>Universidades:</strong> MIT, INRIA, Keio University</li>
+                            <li><strong>Organizaciones:</strong> Gobiernos y ONGs</li>
+                            <li><strong>Desarrolladores independientes:</strong> Comunidad global</li>
+                            <li><strong>Expertos técnicos:</strong> Ingenieros y diseñadores web</li>
+                        </ul>
+                        <br>
+                        <p><strong>Estructura:</strong></p>
+                        <ul>
+                            <li>Más de 400 organizaciones miembro</li>
+                            <li>Staff de tiempo completo</li>
+                            <li>Grupos de trabajo especializados</li>
+                            <li>Grupos de interés comunitario</li>
+                            <li>Proceso abierto de participación</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 5. Importancia para desarrolladores -->
+                <div class="branch importancia">
+                    <div class="branch-title">
+                        <span class="branch-icon">⚡</span>
+                        <h3>Importancia para Desarrolladores</h3>
+                    </div>
+                    <div class="branch-content">
+                        <p><strong>Beneficios directos:</strong></p>
+                        <ul>
+                            <li><strong>Compatibilidad:</strong> El código funciona en todos los navegadores</li>
+                            <li><strong>Futuro-proof:</strong> Tecnologías que perduran en el tiempo</li>
+                            <li><strong>Mejor experiencia de usuario:</strong> Sitios más rápidos y accesibles</li>
+                            <li><strong>SEO mejorado:</strong> Código semántico mejora el posicionamiento</li>
+                            <li><strong>Mantenibilidad:</strong> Código más limpio y organizado</li>
+                            <li><strong>Accesibilidad garantizada:</strong> Alcance a más usuarios</li>
+                        </ul>
+                        <br>
+                        <p><strong>Impacto profesional:</strong></p>
+                        <ul>
+                            <li>Estándar de la industria</li>
+                            <li>Requisito en proyectos profesionales</li>
+                            <li>Base para certificaciones</li>
+                            <li>Mejor empleabilidad</li>
+                            <li>Código más profesional</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas destacadas -->
+            <div class="highlight-box">
+                <h3>📊 W3C en Números</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="number">30+</span>
+                        <span class="label">Años de Historia</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="number">400+</span>
+                        <span class="label">Organizaciones Miembro</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="number">100+</span>
+                        <span class="label">Estándares Publicados</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="number">∞</span>
+                        <span class="label">Sitios Web Impactados</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Línea de tiempo -->
+            <div class="timeline">
+                <h3>📅 Historia de la W3C</h3>
+                
+                <div class="timeline-item">
+                    <div class="timeline-year">1994</div>
+                    <div class="timeline-content">
+                        <h4>Fundación de W3C</h4>
+                        <p>Tim Berners-Lee funda el W3C en el MIT, con apoyo de CERN y DARPA.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1996</div>
+                    <div class="timeline-content">
+                        <h4>CSS 1.0</h4>
+                        <p>Primer estándar de hojas de estilo en cascada.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1997</div>
+                    <div class="timeline-content">
+                        <h4>HTML 4.0</h4>
+                        <p>Importante actualización del lenguaje HTML.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">1999</div>
+                    <div class="timeline-content">
+                        <h4>WCAG 1.0</h4>
+                        <p>Primera versión de las pautas de accesibilidad web.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2014</div>
+                    <div class="timeline-content">
+                        <h4>HTML5</h4>
+                        <p>Recomendación oficial de HTML5, revolucionando el desarrollo web.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2017</div>
+                    <div class="timeline-content">
+                        <h4>WebAssembly</h4>
+                        <p>Nuevo estándar para ejecutar código de alto rendimiento en navegadores.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-content">
+                        <h4>Web Actual</h4>
+                        <p>Continúa desarrollando estándares para IA, IoT, y Web3.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>Fuentes:</strong> W3C.org | MDN Web Docs | Web Standards Project</p>
+            <p>Creado para el curso de Aplicaciones Web - 2025</p>
+            <p>© Javier Guallichico - EPN</p>
+        </footer>
+    </div>
+
+    <script>
+        // Animación de entrada para las ramas
+        const branches = document.querySelectorAll('.branch');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        branches.forEach(branch => {
+            branch.style.opacity = '0';
+            branch.style.transform = 'translateY(30px)';
+            observer.observe(branch);
+        });
+
+        // Animación para las estadísticas
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1)';
+            }, 500 + (index * 100));
+        });
+
+        // Animación para timeline
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateX(0)';
+                }
+            });
+        }, { threshold: 0.2 });
+
+        timelineItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-50px)';
+            item.style.transition = 'all 0.6s ease';
+            timelineObserver.observe(item);
+        });
+
+        // Efecto hover en el nodo central
+        const centralNode = document.querySelector('.central-node');
+        centralNode.addEventListener('mouseenter', () => {
+            centralNode.style.transform = 'rotate(5deg) scale(1.1)';
+        });
+
+        centralNode.addEventListener('mouseleave', () => {
+            centralNode.style.transform = 'rotate(0deg) scale(1)';
+        });
+
+        console.log('Mapa Mental W3C cargado correctamente ✓');
+    </script>
+</body>
+</html>

@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementación Práctica: Web Speech API - W3C Standard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --dark: #343a40;
+            --light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--info);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: 15px;
+        }
+
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        /* Panel de Control */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .control-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .control-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .control-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        /* Botones */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Área de texto */
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 1rem;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 1rem;
+        }
+
+        .output {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            min-height: 150px;
+            border: 2px solid var(--info);
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Indicador de estado */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+
+        .status.listening {
+            background: var(--success);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status.inactive {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Selector de idioma */
+        select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        /* Controles de voz */
+        .voice-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .slider-container {
+            margin: 1rem 0;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: var(--light);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .value-display {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        /* Documentación */
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .info-box h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .info-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .highlight {
+            color: #4ec9b0;
+        }
+
+        /* Estadísticas */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--dark);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .wave {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            margin: 1rem 0;
+        }
+
+        .wave-bar {
+            width: 10px;
+            background: var(--primary);
+            border-radius: 5px;
+            transition: height 0.1s ease;
+        }
+
+        .learning-section {
+            background: #fff3cd;
+            border-left: 5px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+        }
+
+        .learning-section h3 {
+            color: #856404;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗣️ Implementación Práctica: Web Speech API</h1>
+            <p>Estándar W3C para Reconocimiento y Síntesis de Voz</p>
+            <span class="badge">W3C Standard Implementation</span>
+        </header>
+
+        <!-- Sección de Información del Estándar -->
+        <div class="section">
+            <h2><span class="section-icon">📚</span> Sobre el Estándar</h2>
+            <p><strong>Web Speech API</strong> es un estándar del W3C que permite incorporar capacidades de reconocimiento de voz (speech-to-text) y síntesis de voz (text-to-speech) en aplicaciones web.</p>
+            <br>
+            <p><strong>Especificación oficial:</strong> <a href="https://wicg.github.io/speech-api/" target="_blank">https://wicg.github.io/speech-api/</a></p>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="recognitionCount">0</div>
+                <div class="stat-label">Reconocimientos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="synthesisCount">0</div>
+                <div class="stat-label">Síntesis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="wordCount">0</div>
+                <div class="stat-label">Palabras Procesadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="languagesCount">0</div>
+                <div class="stat-label">Idiomas Disponibles</div>
+            </div>
+        </div>
+
+        <!-- Panel de Control Principal -->
+        <div class="control-panel">
+            <!-- Speech Recognition -->
+            <div class="control-card">
+                <h3>🎤 Reconocimiento de Voz (Speech-to-Text)</h3>
+                <p>Convierte tu voz en texto utilizando SpeechRecognition API</p>
+                
+                <div class="status inactive" id="recognitionStatus">
+                    <span id="statusIcon">⚪</span>
+                    <span id="statusText">Inactivo</span>
+                </div>
+
+                <select id="recognitionLang">
+                    <option value="es-ES">Español (España)</option>
+                    <option value="es-MX">Español (México)</option>
+                    <option value="en-US">English (US)</option>
+                    <option value="en-GB">English (UK)</option>
+                    <option value="fr-FR">Français</option>
+                    <option value="de-DE">Deutsch</option>
+                    <option value="it-IT">Italiano</option>
+                    <option value="pt-BR">Português (Brasil)</option>
+                </select>
+
+                <div class="wave" id="waveform">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+
+                <button class="btn btn-success" id="startRecognition">
+                    🎤 Iniciar Reconocimiento
+                </button>
+                <button class="btn btn-danger" id="stopRecognition" disabled>
+                    ⏹️ Detener
+                </button>
+
+                <div class="output" id="recognitionOutput">
+                    Los resultados del reconocimiento aparecerán aquí...
+                </div>
+            </div>
+
+            <!-- Speech Synthesis -->
+            <div class="control-card">
+                <h3>🔊 Síntesis de Voz (Text-to-Speech)</h3>
+                <p>Convierte texto en voz usando SpeechSynthesis API</p>
+
+                <textarea id="textToSpeak" placeholder="Escribe o pega el texto que quieres escuchar...">¡Hola! Este es un ejemplo de síntesis de voz usando el estándar Web Speech API del W3C. Esta tecnología permite convertir texto en voz de manera natural.</textarea>
+
+                <select id="voiceSelect">
+                    <option>Cargando voces...</option>
+                </select>
+
+                <div class="slider-container">
+                    <label>
+                        Velocidad: <span class="value-display" id="rateValue">1.0</span>
+                    </label>
+                    <input type="range" id="rate" min="0.5" max="2" value="1" step="0.1">
+                </div>
+
+                <div class="slider-container">
+                    <label>
+                        Tono: <span class="value-display" id="pitchValue">1.0</span>
+                    </label>
+                    <input type="range" id="pitch" min="0" max="2" value="1" step="0.1">
+                </div>
+
+                <div class="slider-container">
+                    <label>
+                        Volumen: <span class="value-display" id="volumeValue">1.0</span>
+                    </label>
+                    <input type="range" id="volume" min="0" max="1" value="1" step="0.1">
+                </div>
+
+                <button class="btn btn-primary" id="speak">
+                    🔊 Reproducir Voz
+                </button>
+                <button class="btn btn-warning" id="pause">
+                    ⏸️ Pausar
+                </button>
+                <button class="btn btn-danger" id="stop">
+                    ⏹️ Detener
+                </button>
+            </div>
+        </div>
+
+        <!-- Código de Implementación -->
+        <div class="section">
+            <h2><span class="section-icon">💻</span> Código de Implementación</h2>
+            
+            <h3 style="color: var(--primary); margin-top: 1.5rem;">Speech Recognition (Voz a Texto)</h3>
+            <div class="code-block">
+<span class="highlight">// Crear instancia de reconocimiento de voz</span>
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+<span class="highlight">// Configuración</span>
+recognition.lang = 'es-ES';
+recognition.continuous = true;
+recognition.interimResults = true;
+
+<span class="highlight">// Eventos</span>
+recognition.onresult = (event) => {
+    const transcript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join('');
+    console.log('Texto reconocido:', transcript);
+};
+
+<span class="highlight">// Iniciar reconocimiento</span>
+recognition.start();
+            </div>
+
+            <h3 style="color: var(--primary); margin-top: 1.5rem;">Speech Synthesis (Texto a Voz)</h3>
+            <div class="code-block">
+<span class="highlight">// Crear utterance (mensaje de voz)</span>
+const utterance = new SpeechSynthesisUtterance('Hola mundo');
+
+<span class="highlight">// Configuración</span>
+utterance.lang = 'es-ES';
+utterance.rate = 1.0;  // Velocidad
+utterance.pitch = 1.0; // Tono
+utterance.volume = 1.0; // Volumen
+
+<span class="highlight">// Reproducir</span>
+speechSynthesis.speak(utterance);
+            </div>
+        </div>
+
+        <!-- Aprendizajes -->
+        <div class="learning-section">
+            <h3>📖 ¿Qué Aprendí con esta Implementación?</h3>
+            <ul>
+                <li><strong>APIs Asíncronas:</strong> El reconocimiento de voz trabaja con eventos asíncronos que deben manejarse correctamente.</li>
+                <li><strong>Permisos del navegador:</strong> Se requiere permiso del usuario para acceder al micrófono.</li>
+                <li><strong>Soporte multi-idioma:</strong> La API soporta múltiples idiomas y dialectos.</li>
+                <li><strong>Resultados intermedios:</strong> El reconocimiento puede dar resultados parciales mientras hablas.</li>
+                <li><strong>Control granular:</strong> La síntesis permite ajustar velocidad, tono y volumen.</li>
+                <li><strong>Accesibilidad:</strong> Esta tecnología es fundamental para crear aplicaciones accesibles.</li>
+                <li><strong>UX mejorada:</strong> Las interfaces de voz ofrecen una experiencia más natural.</li>
+            </ul>
+        </div>
+
+        <!-- Casos de Uso -->
+        <div class="info-box">
+            <h3>🎯 Casos de Uso Reales</h3>
+            <ul>
+                <li><strong>Accesibilidad:</strong> Permite a personas con discapacidades visuales o motoras usar aplicaciones web</li>
+                <li><strong>Dictado:</strong> Aplicaciones de transcripción y toma de notas por voz</li>
+                <li><strong>Asistentes virtuales:</strong> Chatbots y asistentes que responden por voz</li>
+                <li><strong>Educación:</strong> Aplicaciones de aprendizaje de idiomas con pronunciación</li>
+                <li><strong>E-learning:</strong> Narración de contenido educativo</li>
+                <li><strong>Navegación manos libres:</strong> Control de aplicaciones sin teclado</li>
+                <li><strong>Lectores de pantalla:</strong> Lectura de contenido web</li>
+            </ul>
+        </div>
+
+        <!-- Ventajas y Limitaciones -->
+        <div class="section">
+            <h2><span class="section-icon">⚖️</span> Ventajas y Limitaciones</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3 style="color: var(--success);">✅ Ventajas</h3>
+                    <ul style="line-height: 2;">
+                        <li>API nativa del navegador (sin librerías externas)</li>
+                        <li>Mejora significativa en accesibilidad</li>
+                        <li>Experiencia de usuario más natural</li>
+                        <li>Soporte para múltiples idiomas</li>
+                        <li>Gratuito y de código abierto</li>
+                        <li>Fácil de implementar</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: var(--danger);">⚠️ Limitaciones</h3>
+                    <ul style="line-height: 2;">
+                        <li>Soporte inconsistente entre navegadores</li>
+                        <li>Requiere conexión a internet (en algunos casos)</li>
+                        <li>Puede tener problemas con acentos/dialectos</li>
+                        <li>Requiere permiso del usuario</li>
+                        <li>Precisión variable según el ruido ambiente</li>
+                        <li>Limitado en algunos navegadores móviles</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compatibilidad -->
+        <div class="section">
+            <h2><span class="section-icon">🌐</span> Compatibilidad de Navegadores</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; text-align: center;">
+                <div>
+                    <div style="font-size: 3rem;">🟢</div>
+                    <strong>Chrome</strong>
+                    <p>Full Support</p>
+                </div>
+                <div>
+                    <div style="font-size: 3rem;">🟢</div>
+                    <strong>Edge</strong>
+                    <p>Full Support</p>
+                </div>
+                <div>
+                    <div style="font-size: 3rem;">🟡</div>
+                    <strong>Firefox</strong>
+                    <p>Parcial</p>
+                </div>
+                <div>
+                    <div style="font-size: 3rem;">🟢</div>
+                    <strong>Safari</strong>
+                    <p>iOS 14.5+</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--light); color: #666;">
+            <p><strong>Implementación Práctica - Estándares W3C</strong></p>
+            <p>Web Speech API - Speech Recognition & Speech Synthesis</p>
+            <p>Aplicaciones Web - EPN 2025</p>
+            <p>Autor: Javier Guallichico</p>
+            <br>
+            <p style="font-size: 0.9rem;">
+                <strong>Referencias:</strong><br>
+                <a href="https://wicg.github.io/speech-api/" target="_blank">W3C Speech API Specification</a> |
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API" target="_blank">MDN Web Docs</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // ===================== ESTADÍSTICAS =====================
+        let stats = {
+            recognitions: 0,
+            syntheses: 0,
+            words: 0,
+            languages: 0
+        };
+
+        function updateStats() {
+            document.getElementById('recognitionCount').textContent = stats.recognitions;
+            document.getElementById('synthesisCount').textContent = stats.syntheses;
+            document.getElementById('wordCount').textContent = stats.words;
+            document.getElementById('languagesCount').textContent = stats.languages;
+        }
+
+        // ===================== SPEECH RECOGNITION =====================
+        let recognition = null;
+        let isRecognizing = false;
+
+        // Verificar soporte
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            
+            // Configuración
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+            
+            // Eventos
+            recognition.onstart = () => {
+                isRecognizing = true;
+                document.getElementById('recognitionStatus').className = 'status listening';
+                document.getElementById('statusIcon').textContent = '🔴';
+                document.getElementById('statusText').textContent = 'Escuchando...';
+                document.getElementById('startRecognition').disabled = true;
+                document.getElementById('stopRecognition').disabled = false;
+                animateWaveform();
+            };
+
+            recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                        stats.recognitions++;
+                        stats.words += transcript.split(' ').length;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                const output = document.getElementById('recognitionOutput');
+                if (finalTranscript) {
+                    output.innerHTML += `<p><strong>✓ Final:</strong> ${finalTranscript}</p>`;
+                    output.scrollTop = output.scrollHeight;
+                }
+                if (interimTranscript) {
+                    output.innerHTML += `<p style="color: #999;"><em>Parcial: ${interimTranscript}</em></p>`;
+                    output.scrollTop = output.scrollHeight;
+                }
+                
+                updateStats();
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Error de reconocimiento:', event.error);
+                let errorMsg = 'Error: ';
+                switch(event.error) {
+                    case 'no-speech':
+                        errorMsg += 'No se detectó voz. Intenta hablar más cerca del micrófono.';
+                        break;
+                    case 'audio-capture':
+                        errorMsg += 'No se pudo acceder al micrófono.';
+                        break;
+                    case 'not-allowed':
+                        errorMsg += 'Permiso de micrófono denegado.';
+                        break;
+                    default:
+                        errorMsg += event.error;
+                }
+                document.getElementById('recognitionOutput').innerHTML += `<p style="color: red;">${errorMsg}</p>`;
+                stopRecognition();
+            };
+
+            recognition.onend = () => {
+                stopRecognition();
+            };
+        } else {
+            document.getElementById('recognitionOutput').innerHTML = 
+                '<p style="color: red;"><strong>⚠️ Tu navegador no soporta Speech Recognition.</strong><br>Prueba con Chrome, Edge o Safari.</p>';
+            document.getElementById('startRecognition').disabled = true;
+        }
+
+        // Botones de reconocimiento
+        document.getElementById('startRecognition').addEventListener('click', () => {
+            const lang = document.getElementById('recognitionLang').value;
+            recognition.lang = lang;
+            document.getElementById('recognitionOutput').innerHTML = '<p>🎤 <em>Iniciando reconocimiento... Habla ahora.</em></p>';
+            recognition.start();
+        });
+
+        document.getElementById('stopRecognition').addEventListener('click', () => {
+            recognition.stop();
+        });
+
+        function stopRecognition() {
+            isRecognizing = false;
+            document.getElementById('recognitionStatus').className = 'status inactive';
+            document.getElementById('statusIcon').textContent = '⚪';
+            document.getElementById('statusText').textContent = 'Inactivo';
+            document.getElementById('startRecognition').disabled = false;
+            document.getElementById('stopRecognition').disabled = true;
+            stopWaveform();
+        }
+
+        // Animación de forma de onda
+        let waveInterval;
+        function animateWaveform() {
+            const bars = document.querySelectorAll('.wave-bar');
+            waveInterval = setInterval(() => {
+                bars.forEach(bar => {
+                    const height = Math.random() * 50 + 10;
+                    bar.style.height = height + 'px';
+                });
+            }, 100);
+        }
+
+        function stopWaveform() {
+            clearInterval(waveInterval);
+            const bars = document.querySelectorAll('.wave-bar');
+            bars.forEach(bar => {
+                bar.style.height = '10px';
+            });
+        }
+
+        // ===================== SPEECH SYNTHESIS =====================
+        const synth = window.speechSynthesis;
+        let voices = [];
+
+        function loadVoices() {
+            voices = synth.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+            
+            const spanishVoices = voices.filter(voice => voice.lang.startsWith('es'));
+            const otherVoices = voices.filter(voice => !voice.lang.startsWith('es'));
+            
+            if (spanishVoices.length > 0) {
+                const spanishGroup = document.createElement('optgroup');
+                spanishGroup.label = 'Español';
+                spanishVoices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.value = voice.name;
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    spanishGroup.appendChild(option);
+                });
+                voiceSelect.appendChild(spanishGroup);
+            }
+            
+            const otherGroup = document.createElement('optgroup');
+            otherGroup.label = 'Otros Idiomas';
+            otherVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                otherGroup.appendChild(option);
+            });
+            voiceSelect.appendChild(otherGroup);
+            
+            stats.languages = new Set(voices.map(v => v.lang)).size;
+            updateStats();
+        }
+
+        // Cargar voces
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+
+        // Controles deslizantes
+        const rateInput = document.getElementById('rate');
+        const pitchInput = document.getElementById('pitch');
+        const volumeInput = document.getElementById('volume');
+
+        rateInput.addEventListener('input', (e) => {
+            document.getElementById('rateValue').textContent = e.target.value;
+        });
+
+        pitchInput.addEventListener('input', (e) => {
+            document.getElementById('pitchValue').textContent = e.target.value;
+        });
+
+        volumeInput.addEventListener('input', (e) => {
+            document.getElementById('volumeValue').textContent = e.target.value;
+        });
+
+        // Botón de hablar
+        document.getElementById('speak').addEventListener('click', () => {
+            const text = document.getElementById('textToSpeak').value;
+            
+            if (text.trim() === '') {
+                alert('Por favor, escribe algo de texto primero.');
+                return;
+            }
+
+            // Cancelar cualquier síntesis en curso
+            synth.cancel();
+
+            // Crear utterance
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Configurar voz
+            const selectedVoice = document.getElementById('voiceSelect').value;
+            const voice = voices.find(v => v.name === selectedVoice);
+            if (voice) utterance.voice = voice;
+            
+            // Configurar parámetros
+            utterance.rate = parseFloat(rateInput.value);
+            utterance.pitch = parseFloat(pitchInput.value);
+            utterance.volume = parseFloat(volumeInput.value);
+
+            // Eventos
+            utterance.onstart = () => {
+                stats.syntheses++;
+                stats.words += text.split(' ').length;
+                updateStats();
+                console.log('Síntesis iniciada');
+            };
+
+            utterance.onend = () => {
+                console.log('Síntesis completada');
+            };
+
+            utterance.onerror = (event) => {
+                console.error('Error en síntesis:', event.error);
+                alert('Error al reproducir la voz: ' + event.error);
+            };
+
+            // Reproducir
+            synth.speak(utterance);
+        });
+
+        // Botón de pausar
+        document.getElementById('pause').addEventListener('click', () => {
+            if (synth.speaking && !synth.paused) {
+                synth.pause();
+            } else {
+                synth.resume();
+            }
+        });
+
+        // Botón de detener
+        document.getElementById('stop').addEventListener('click', () => {
+            synth.cancel();
+        });
+
+        // ===================== INICIALIZACIÓN =====================
+        updateStats();
+        
+        console.log('✓ Implementación de Web Speech API cargada correctamente');
+        console.log('✓ Speech Recognition:', recognition ? 'Disponible' : 'No disponible');
+        console.log('✓ Speech Synthesis:', synth ? 'Disponible' : 'No disponible');
+        console.log('✓ Voces disponibles:', voices.length);
+    </script>
+</body>
+</html>
