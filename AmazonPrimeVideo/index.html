@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Video - Películas y Series Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header con Flexbox -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="https://m.media-amazon.com/images/G/01/digital/video/web/Logo-min.png" alt="Prime Video" class="logo">
+                <ul class="nav-menu">
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#store">Tienda</a></li>
+                    <li><a href="#channels">Canales</a></li>
+                    <li><a href="#categories">Categorías</a></li>
+                    <li><a href="#mylist">Mi lista</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar">
+                </div>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section con Flexbox -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>The Lord of the Rings: The Rings of Power</h1>
+            <p class="hero-description">
+                Ambientada miles de años antes de los eventos de "El Hobbit" y "El Señor de los Anillos", 
+                esta serie épica lleva a los espectadores a una era en la que se forjaron grandes poderes.
+            </p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary">
+                    <i class="fas fa-play"></i> Reproducir
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-plus"></i> Mi lista
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> Más información
+                </button>
+            </div>
+        </div>
+        <div class="hero-gradient"></div>
+    </section>
+
+    <!-- Categories Section con Grid -->
+    <main class="main-content">
+        <!-- Categoría: Continuar viendo -->
+        <section class="category">
+            <div class="category-header">
+                <h2>Continuar viendo</h2>
+                <a href="#" class="view-all">Ver todo <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <img src="https://image.tmdb.org/t/p/w500/stKGOm8UyhuLPR9sZLjs5AkmncA.jpg" alt="Intensamente">
+                    <div class="card-info">
+                        <h3>Intensamente</h3>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://image.tmdb.org/t/p/w500/zS7fQiOZiKCVH2vlYSiIsFWW8hh.jpg" alt="The Marvelous Mrs. Maisel">
+                    <div class="card-info">
+                        <h3>The Marvelous Mrs. Maisel</h3>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://image.tmdb.org/t/p/w500/mpgDeLhl8HbhI03XLB7iKO6M6JE.jpg" alt="The Wheel of Time">
+                    <div class="card-info">
+                        <h3>The Wheel of Time</h3>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categoría: Amazon Originals -->
+        <section class="category">
+            <div class="category-header">
+                <h2>Amazon Originals</h2>
+                <a href="#" class="view-all">Ver todo <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <img src="https://image.tmdb.org/t/p/w500/mYLOqiStMxDK3fYZFirgrMt8z5d.jpg" alt="The Lord of the Rings">
+                    <div class="card-overlay">
+                        <div class="card-actions">
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                            <button class="add-btn"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categoría: Películas -->
+        <section class="category">
+            <div class="category-header">
+                <h2>Películas recomendadas</h2>
+                <a href="#" class="view-all">Ver todo <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <img src="https://image.tmdb.org/t/p/w500/qjhahNLSZ705B5JP92YMEYPocPz.jpg" alt="Saltburn">
+                    <div class="card-overlay">
+                        <div class="card-actions">
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                            <button class="add-btn"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://image.tmdb.org/t/p/w500/cdqLnri3NEGcmfnqwk2TSIYtddg.jpg" alt="Red One">
+                    <div class="card-overlay">
+                        <div class="card-actions">
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                            <button class="add-btn"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://image.tmdb.org/t/p/w500/bXi6IQiQDHD00JFio5ZSZOeRSBh.jpg" alt="Road House">
+                    <div class="card-overlay">
+                        <div class="card-actions">
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                            <button class="add-btn"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer con Grid -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="https://m.media-amazon.com/images/G/01/digital/video/web/Logo-min.png" alt="Prime Video">
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Prime Video</h4>
+                    <ul>
+                        <li><a href="#">Términos y condiciones</a></li>
+                        <li><a href="#">Política de privacidad</a></li>
+                        <li><a href="#">Ayuda</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Información</h4>
+                    <ul>
+                        <li><a href="#">Trabajos</a></li>
+                        <li><a href="#">Prensa</a></li>
+                        <li><a href="#">Avisos legales</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Redes sociales</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Amazon.com, Inc. o sus afiliados</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
