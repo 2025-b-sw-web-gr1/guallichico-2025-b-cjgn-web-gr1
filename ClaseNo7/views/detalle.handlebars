@@ -1,0 +1,328 @@
+<style>
+    .producto-detalle {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-bottom: 4rem;
+    }
+
+    .producto-imagen-grande {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 20px;
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10rem;
+        color: white;
+        border: 3px solid var(--primary);
+        box-shadow: 0 20px 60px rgba(255, 0, 128, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .producto-imagen-grande::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 10s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .producto-info {
+        padding: 1rem 0;
+    }
+
+    .producto-categoria-badge {
+        display: inline-block;
+        background: rgba(0, 240, 255, 0.2);
+        color: var(--accent);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--accent);
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .producto-titulo {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .producto-rating-detalle {
+        font-size: 1.5rem;
+        color: var(--warning);
+        margin-bottom: 1.5rem;
+    }
+
+    .producto-descripcion-detalle {
+        color: var(--text-muted);
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .precio-container {
+        background: rgba(255, 0, 128, 0.1);
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        border: 2px solid var(--primary);
+    }
+
+    .precio-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .precio-grande {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .descuento-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+        margin-left: 1rem;
+    }
+
+    .precio-original-grande {
+        text-decoration: line-through;
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+    }
+
+    .stock-info {
+        background: rgba(0, 255, 136, 0.1);
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        text-align: center;
+        border: 2px solid var(--success);
+    }
+
+    .stock-info strong {
+        color: var(--success);
+        font-size: 1.2rem;
+    }
+
+    .specs-section {
+        margin-bottom: 2rem;
+    }
+
+    .specs-section h3 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .specs-lista {
+        list-style: none;
+        padding: 0;
+    }
+
+    .specs-lista li {
+        background: rgba(26, 31, 58, 0.6);
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        border-radius: 10px;
+        border-left: 4px solid var(--primary);
+        color: var(--text);
+        transition: all 0.3s;
+    }
+
+    .specs-lista li:hover {
+        background: rgba(255, 0, 128, 0.1);
+        transform: translateX(10px);
+    }
+
+    .specs-lista li i {
+        color: var(--accent);
+        margin-right: 0.5rem;
+    }
+
+    .botones-accion {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-comprar {
+        padding: 1.2rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-comprar:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 0, 128, 0.6);
+    }
+
+    .btn-favorito {
+        padding: 1.2rem;
+        background: rgba(0, 240, 255, 0.1);
+        color: var(--accent);
+        text-decoration: none;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        transition: all 0.3s;
+        border: 2px solid var(--accent);
+    }
+
+    .btn-favorito:hover {
+        background: var(--accent);
+        color: var(--dark);
+    }
+
+    .relacionados-section {
+        margin-top: 4rem;
+    }
+
+    .relacionados-section h2 {
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .relacionados-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+        .producto-detalle {
+            grid-template-columns: 1fr;
+        }
+
+        .botones-accion {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="producto-detalle">
+    <div class="producto-imagen-grande">
+        <i class="fas fa-microchip"></i>
+    </div>
+
+    <div class="producto-info">
+        <span class="producto-categoria-badge">
+            <i class="fas fa-tag"></i> {{producto.categoria}}
+        </span>
+
+        <h1 class="producto-titulo">{{producto.nombre}}</h1>
+
+        <div class="producto-rating-detalle">
+            {{stars producto.rating}} ({{producto.rating}}/5)
+        </div>
+
+        <p class="producto-descripcion-detalle">{{producto.descripcion}}</p>
+
+        <div class="precio-container">
+            <div class="precio-label">Precio:</div>
+            {{#if (hasDiscount producto.descuento)}}
+            <div class="precio-grande">
+                {{formatPrice (calcDiscount producto.precio producto.descuento)}}
+                <span class="descuento-badge">-{{producto.descuento}}% OFF</span>
+            </div>
+            <div class="precio-original-grande">
+                Precio regular: {{formatPrice producto.precio}}
+            </div>
+            {{else}}
+            <div class="precio-grande">{{formatPrice producto.precio}}</div>
+            {{/if}}
+        </div>
+
+        <div class="stock-info">
+            <i class="fas fa-check-circle"></i>
+            <strong>{{producto.stock}}</strong> unidades disponibles
+        </div>
+
+        <div class="specs-section">
+            <h3><i class="fas fa-cogs"></i> Especificaciones Técnicas</h3>
+            <ul class="specs-lista">
+                {{#each producto.specs}}
+                <li>
+                    <i class="fas fa-check"></i>
+                    {{this}}
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+
+        <div class="botones-accion">
+            <button class="btn-comprar">
+                <i class="fas fa-shopping-cart"></i> Agregar al Carrito
+            </button>
+            <button class="btn-favorito">
+                <i class="fas fa-heart"></i>
+            </button>
+        </div>
+
+        <a href="/productos?categoria={{producto.categoria}}" style="color: var(--accent); text-decoration: none; display: inline-block; margin-top: 1rem;">
+            <i class="fas fa-arrow-left"></i> Volver a {{producto.categoria}}
+        </a>
+    </div>
+</div>
+
+{{#if relacionados}}
+<section class="relacionados-section">
+    <h2><i class="fas fa-cube"></i> Productos Relacionados</h2>
+    <div class="relacionados-grid">
+        {{#each relacionados}}
+        <article class="producto-card" style="background: rgba(26, 31, 58, 0.6); border-radius: 15px; overflow: hidden; border: 2px solid transparent; transition: all 0.3s;">
+            <div style="width: 100%; height: 200px; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: white;">
+                <i class="fas fa-microchip"></i>
+            </div>
+            <div style="padding: 1.5rem;">
+                <h3 style="color: var(--text); margin-bottom: 0.5rem;">{{nombre}}</h3>
+                <div style="color: var(--warning); margin-bottom: 1rem;">{{stars rating}}</div>
+                <div style="font-size: 1.5rem; font-weight: bold; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem;">
+                    {{formatPrice precio}}
+                </div>
+                <a href="/producto/{{id}}" style="display: block; width: 100%; padding: 0.8rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; text-decoration: none; border-radius: 8px; text-align: center; font-weight: bold;">
+                    <i class="fas fa-eye"></i> Ver Detalles
+                </a>
+            </div>
+        </article>
+        {{/each}}
+    </div>
+</section>
+{{/if}}

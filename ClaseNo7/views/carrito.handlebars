@@ -1,0 +1,142 @@
+<style>
+    .carrito-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(0, 240, 255, 0.2));
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 3rem;
+        border: 2px solid var(--primary);
+        text-align: center;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .carrito-vacio {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: rgba(26, 31, 58, 0.6);
+        border-radius: 20px;
+        border: 2px dashed var(--text-muted);
+    }
+
+    .carrito-vacio i {
+        font-size: 6rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+
+    .carrito-vacio h2 {
+        color: var(--text);
+        margin-bottom: 1rem;
+        font-size: 2rem;
+    }
+
+    .carrito-vacio p {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-comprar-ahora {
+        display: inline-block;
+        padding: 1.2rem 3rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        transition: all 0.3s;
+        box-shadow: 0 10px 30px rgba(255, 0, 128, 0.4);
+    }
+
+    .btn-comprar-ahora:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(255, 0, 128, 0.6);
+    }
+
+    .promo-section {
+        margin-top: 3rem;
+        padding: 2rem;
+        background: rgba(0, 240, 255, 0.1);
+        border-radius: 15px;
+        border: 2px solid var(--accent);
+    }
+
+    .promo-section h3 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .promo-lista {
+        list-style: none;
+        padding: 0;
+    }
+
+    .promo-lista li {
+        padding: 0.8rem 0;
+        color: var(--text);
+        border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    }
+
+    .promo-lista li:last-child {
+        border-bottom: none;
+    }
+
+    .promo-lista li i {
+        color: var(--success);
+        margin-right: 0.5rem;
+    }
+</style>
+
+<div class="carrito-container">
+    <div class="page-header">
+        <h1><i class="fas fa-shopping-cart"></i> Mi Carrito</h1>
+    </div>
+
+    <div class="carrito-vacio">
+        <i class="fas fa-shopping-basket"></i>
+        <h2>Tu carrito está vacío</h2>
+        <p>¡Es hora de llenarlo con productos increíbles!</p>
+        <a href="/productos" class="btn-comprar-ahora">
+            <i class="fas fa-shopping-bag"></i> Ir a Comprar
+        </a>
+    </div>
+
+    <div class="promo-section">
+        <h3><i class="fas fa-gift"></i> Beneficios de Comprar con Nosotros</h3>
+        <ul class="promo-lista">
+            <li>
+                <i class="fas fa-shipping-fast"></i>
+                <strong>Envío Gratis</strong> a todo Ecuador en compras mayores a $50
+            </li>
+            <li>
+                <i class="fas fa-shield-alt"></i>
+                <strong>Garantía Oficial</strong> de 2 años en todos los productos
+            </li>
+            <li>
+                <i class="fas fa-credit-card"></i>
+                <strong>Pago Seguro</strong> con tarjeta de crédito, débito o transferencia
+            </li>
+            <li>
+                <i class="fas fa-undo"></i>
+                <strong>Devolución Gratis</strong> dentro de los primeros 30 días
+            </li>
+            <li>
+                <i class="fas fa-headset"></i>
+                <strong>Soporte 24/7</strong> para cualquier consulta técnica
+            </li>
+        </ul>
+    </div>
+</div>

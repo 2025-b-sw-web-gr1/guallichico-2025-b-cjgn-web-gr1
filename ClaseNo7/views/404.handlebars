@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada | TechGamer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-container {
+            max-width: 600px;
+        }
+
+        .error-icon {
+            font-size: 6rem;
+            background: linear-gradient(135deg, #ff0080, #00f0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff0080, #00f0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-5px);
+            }
+            40% {
+                transform: translateX(5px);
+            }
+            60% {
+                transform: translateX(-5px);
+            }
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .error-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ff0080;
+        }
+
+        .error-message {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, #ff0080, #7928ca);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255, 0, 128, 0.4);
+        }
+
+        .btn-home:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 0, 128, 0.6);
+        }
+
+        .btn-home i {
+            margin-right: 0.5rem;
+        }
+
+        .quick-links {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-link {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 240, 255, 0.1);
+            color: #00f0ff;
+            text-decoration: none;
+            border-radius: 25px;
+            border: 2px solid #00f0ff;
+            transition: all 0.3s;
+        }
+
+        .quick-link:hover {
+            background: #00f0ff;
+            color: #0a0e27;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">¡Oops! Página No Encontrada</h1>
+        <p class="error-message">
+            Lo sentimos, la página que buscas no existe o ha sido movida.
+            ¿Qué tal si exploramos nuestro catálogo de productos gaming?
+        </p>
+        <a href="/" class="btn-home">
+            <i class="fas fa-home"></i>
+            Volver al Inicio
+        </a>
+        
+        <div class="quick-links">
+            <a href="/productos" class="quick-link">
+                <i class="fas fa-shopping-bag"></i> Ver Productos
+            </a>
+            <a href="/productos?categoria=gpu" class="quick-link">
+                <i class="fas fa-microchip"></i> GPUs
+            </a>
+            <a href="/carrito" class="quick-link">
+                <i class="fas fa-shopping-cart"></i> Carrito
+            </a>
+        </div>
+    </div>
+</body>
+</html>
