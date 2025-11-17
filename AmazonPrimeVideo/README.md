@@ -183,24 +183,6 @@ AmazonPrimeVideo/
    - Opción 2: Abrir con Live Server en VS Code
    - Opción 3: Arrastrar el archivo al navegador
 
-## 📸 Capturas de Pantalla
-
-### Desktop
-- Hero section con imagen de fondo
-- Navegación completa con búsqueda
-- Grillas de 6 columnas de contenido
-
-### Tablet
-- Grillas de 4-3 columnas
-- Footer en 2 columnas
-- Botones ajustados
-
-### Mobile
-- Grillas de 2 columnas
-- Navegación simplificada
-- Botones verticales
-- Footer en 1 columna
-
 ## 🎓 Conceptos de CSS Aprendidos
 
 ### Layout
