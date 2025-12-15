@@ -1,0 +1,70 @@
+meta {
+  name: GET Author of Book
+  type: http
+  seq: 14
+}
+
+get {
+  url: https://api.biblioteca.com/v1/books/1/author
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Obtener el autor de un libro (Relación inversa)
+  
+  Este endpoint retorna la información del autor que escribió un libro específico.
+  
+  ## Path Parameter:
+  - id: ID del libro
+  
+  ## Respuestas:
+  - 200: Información del libro y su autor
+  - 404: Libro no encontrado
+  
+  ## Ejemplo de respuesta:
+  ```json
+  {
+    "book": {
+      "id": 1,
+      "title": "Cien años de soledad",
+      "publishedYear": 1967
+    },
+    "author": {
+      "id": 1,
+      "name": "Gabriel García Márquez",
+      "country": "Colombia",
+      "biography": "Escritor colombiano, premio Nobel"
+    }
+  }
+  ```
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contiene información del libro", function() {
+    const response = res.getBody();
+    expect(response).to.have.property('book');
+    expect(response.book).to.have.property('id');
+    expect(response.book).to.have.property('title');
+  });
+  
+  test("Response contiene información del autor", function() {
+    const response = res.getBody();
+    expect(response).to.have.property('author');
+    expect(response.author).to.have.property('id');
+    expect(response.author).to.have.property('name');
+  });
+  
+  test("Author ID coincide con authorId del libro", function() {
+    const response = res.getBody();
+    expect(response.book.authorId).to.equal(response.author.id);
+  });
+}

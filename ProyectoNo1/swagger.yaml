@@ -1,0 +1,880 @@
+openapi: 3.0.0
+info:
+  title: API de Biblioteca - Autores y Libros
+  description: |
+    API RESTful para gestionar una biblioteca digital con relación 1:N entre Autores y Libros.
+    
+    **Relación del modelo:**
+    - 1 Autor puede tener muchos Libros
+    - 1 Libro pertenece a un solo Autor
+    
+    Esta API permite realizar operaciones CRUD completas sobre autores y libros,
+    así como consultar todos los libros de un autor específico.
+    
+    Desarrollado por: Javier Guallichico - EPN 2025
+  version: 1.0.0
+  contact:
+    name: Javier Guallichico
+    email: javier.guallichico@epn.edu.ec
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.biblioteca.com/v1
+    description: Servidor de producción
+  - url: http://localhost:3000/v1
+    description: Servidor de desarrollo local
+
+tags:
+  - name: Autores
+    description: Operaciones relacionadas con autores
+  - name: Libros
+    description: Operaciones relacionadas con libros
+  - name: Relaciones
+    description: Consultas que involucran relaciones entre entidades
+
+paths:
+  # ==================== AUTORES ====================
+  /authors:
+    get:
+      tags:
+        - Autores
+      summary: Obtener todos los autores
+      description: Retorna una lista completa de todos los autores registrados en la biblioteca
+      parameters:
+        - name: country
+          in: query
+          description: Filtrar autores por país
+          required: false
+          schema:
+            type: string
+            example: "Colombia"
+        - name: limit
+          in: query
+          description: Número máximo de resultados
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+            example: 10
+      responses:
+        '200':
+          description: Lista de autores obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Author'
+              example:
+                - id: 1
+                  name: "Gabriel García Márquez"
+                  biography: "Escritor colombiano, premio Nobel de Literatura 1982"
+                  birthDate: "1927-03-06"
+                  country: "Colombia"
+                  email: "garcia.marquez@example.com"
+                  website: "https://gabrielgarciamarquez.com"
+                - id: 2
+                  name: "Isabel Allende"
+                  biography: "Escritora chilena, autora de La casa de los espíritus"
+                  birthDate: "1942-08-02"
+                  country: "Chile"
+                  email: "isabel.allende@example.com"
+                  website: "https://isabelallende.com"
+    
+    post:
+      tags:
+        - Autores
+      summary: Crear un nuevo autor
+      description: Registra un nuevo autor en la base de datos de la biblioteca
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+            example:
+              name: "Gabriel García Márquez"
+              biography: "Escritor colombiano, premio Nobel de Literatura 1982"
+              birthDate: "1927-03-06"
+              country: "Colombia"
+              email: "garcia.marquez@example.com"
+              website: "https://gabrielgarciamarquez.com"
+      responses:
+        '201':
+          description: Autor creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+              example:
+                id: 1
+                name: "Gabriel García Márquez"
+                biography: "Escritor colombiano, premio Nobel de Literatura 1982"
+                birthDate: "1927-03-06"
+                country: "Colombia"
+                email: "garcia.marquez@example.com"
+                website: "https://gabrielgarciamarquez.com"
+        '400':
+          description: Datos de entrada inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 400
+                message: "El campo 'name' es requerido"
+
+  /authors/{id}:
+    get:
+      tags:
+        - Autores
+      summary: Obtener un autor específico
+      description: Retorna la información detallada de un autor por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único del autor
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Autor encontrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+              example:
+                id: 1
+                name: "Gabriel García Márquez"
+                biography: "Escritor colombiano, premio Nobel de Literatura 1982"
+                birthDate: "1927-03-06"
+                country: "Colombia"
+                email: "garcia.marquez@example.com"
+                website: "https://gabrielgarciamarquez.com"
+        '404':
+          description: Autor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 404
+                message: "Autor con ID 1 no encontrado"
+    
+    put:
+      tags:
+        - Autores
+      summary: Actualizar un autor completo
+      description: Actualiza todos los campos de un autor existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del autor a actualizar
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorInput'
+            example:
+              name: "Gabriel García Márquez"
+              biography: "Escritor colombiano, premio Nobel de Literatura 1982. Autor de Cien años de soledad."
+              birthDate: "1927-03-06"
+              country: "Colombia"
+              email: "garcia.marquez@example.com"
+              website: "https://gabrielgarciamarquez.com"
+      responses:
+        '200':
+          description: Autor actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Autor no encontrado
+    
+    patch:
+      tags:
+        - Autores
+      summary: Actualizar parcialmente un autor
+      description: Actualiza solo algunos campos específicos de un autor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del autor a actualizar
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                biography:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                website:
+                  type: string
+                  format: uri
+            example:
+              biography: "Escritor colombiano, premio Nobel de Literatura 1982. Autor de Cien años de soledad y El amor en los tiempos del cólera."
+      responses:
+        '200':
+          description: Autor actualizado parcialmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          description: Autor no encontrado
+    
+    delete:
+      tags:
+        - Autores
+      summary: Eliminar un autor
+      description: Elimina un autor de la base de datos. NOTA - También elimina todos sus libros asociados.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del autor a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Autor eliminado exitosamente
+        '404':
+          description: Autor no encontrado
+        '409':
+          description: Conflicto - El autor tiene libros asociados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 409
+                message: "No se puede eliminar el autor porque tiene 5 libros asociados"
+
+  # ==================== LIBROS ====================
+  /books:
+    get:
+      tags:
+        - Libros
+      summary: Obtener todos los libros
+      description: Retorna una lista completa de todos los libros registrados en la biblioteca
+      parameters:
+        - name: genre
+          in: query
+          description: Filtrar libros por género literario
+          required: false
+          schema:
+            type: string
+            enum: [Ficción, No Ficción, Poesía, Drama, Ciencia Ficción, Fantasía, Romance, Thriller, Historia, Biografía]
+            example: "Ficción"
+        - name: language
+          in: query
+          description: Filtrar libros por idioma
+          required: false
+          schema:
+            type: string
+            example: "Español"
+        - name: minPrice
+          in: query
+          description: Precio mínimo del libro
+          required: false
+          schema:
+            type: number
+            format: float
+            example: 10.0
+        - name: maxPrice
+          in: query
+          description: Precio máximo del libro
+          required: false
+          schema:
+            type: number
+            format: float
+            example: 50.0
+        - name: limit
+          in: query
+          description: Número máximo de resultados
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+            example: 10
+      responses:
+        '200':
+          description: Lista de libros obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+              example:
+                - id: 1
+                  title: "Cien años de soledad"
+                  isbn: "978-0307474728"
+                  publishedYear: 1967
+                  genre: "Ficción"
+                  pages: 417
+                  language: "Español"
+                  price: 25.99
+                  description: "La obra maestra de Gabriel García Márquez que narra la historia de la familia Buendía"
+                  authorId: 1
+                - id: 2
+                  title: "El amor en los tiempos del cólera"
+                  isbn: "978-0307389732"
+                  publishedYear: 1985
+                  genre: "Romance"
+                  pages: 368
+                  language: "Español"
+                  price: 22.50
+                  description: "Una historia de amor que trasciende el tiempo"
+                  authorId: 1
+    
+    post:
+      tags:
+        - Libros
+      summary: Crear un nuevo libro
+      description: Registra un nuevo libro en la biblioteca asociado a un autor existente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+            example:
+              title: "Cien años de soledad"
+              isbn: "978-0307474728"
+              publishedYear: 1967
+              genre: "Ficción"
+              pages: 417
+              language: "Español"
+              price: 25.99
+              description: "La obra maestra de Gabriel García Márquez que narra la historia de la familia Buendía"
+              authorId: 1
+      responses:
+        '201':
+          description: Libro creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+              example:
+                id: 1
+                title: "Cien años de soledad"
+                isbn: "978-0307474728"
+                publishedYear: 1967
+                genre: "Ficción"
+                pages: 417
+                language: "Español"
+                price: 25.99
+                description: "La obra maestra de Gabriel García Márquez"
+                authorId: 1
+        '400':
+          description: Datos de entrada inválidos
+        '404':
+          description: Autor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 404
+                message: "El autor con ID 1 no existe"
+
+  /books/{id}:
+    get:
+      tags:
+        - Libros
+      summary: Obtener un libro específico
+      description: Retorna la información detallada de un libro por su ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único del libro
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Libro encontrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+              example:
+                id: 1
+                title: "Cien años de soledad"
+                isbn: "978-0307474728"
+                publishedYear: 1967
+                genre: "Ficción"
+                pages: 417
+                language: "Español"
+                price: 25.99
+                description: "La obra maestra de Gabriel García Márquez"
+                authorId: 1
+        '404':
+          description: Libro no encontrado
+    
+    put:
+      tags:
+        - Libros
+      summary: Actualizar un libro completo
+      description: Actualiza todos los campos de un libro existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del libro a actualizar
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookInput'
+            example:
+              title: "Cien años de soledad"
+              isbn: "978-0307474728"
+              publishedYear: 1967
+              genre: "Ficción"
+              pages: 417
+              language: "Español"
+              price: 29.99
+              description: "Obra cumbre del realismo mágico latinoamericano"
+              authorId: 1
+      responses:
+        '200':
+          description: Libro actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Libro no encontrado
+    
+    patch:
+      tags:
+        - Libros
+      summary: Actualizar parcialmente un libro
+      description: Actualiza solo algunos campos específicos de un libro
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del libro a actualizar
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                description:
+                  type: string
+                pages:
+                  type: integer
+            example:
+              price: 29.99
+              description: "Obra cumbre del realismo mágico latinoamericano"
+      responses:
+        '200':
+          description: Libro actualizado parcialmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Libro no encontrado
+    
+    delete:
+      tags:
+        - Libros
+      summary: Eliminar un libro
+      description: Elimina un libro de la base de datos
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del libro a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '204':
+          description: Libro eliminado exitosamente
+        '404':
+          description: Libro no encontrado
+
+  # ==================== RELACIONES ====================
+  /authors/{id}/books:
+    get:
+      tags:
+        - Relaciones
+        - Autores
+        - Libros
+      summary: Obtener todos los libros de un autor
+      description: |
+        Retorna la lista completa de libros escritos por un autor específico.
+        Esta es la consulta principal de la relación 1:N entre Autores y Libros.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del autor
+          schema:
+            type: integer
+            example: 1
+        - name: genre
+          in: query
+          description: Filtrar libros del autor por género
+          required: false
+          schema:
+            type: string
+            example: "Ficción"
+      responses:
+        '200':
+          description: Lista de libros del autor obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  author:
+                    $ref: '#/components/schemas/Author'
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  totalBooks:
+                    type: integer
+                    description: Cantidad total de libros del autor
+              example:
+                author:
+                  id: 1
+                  name: "Gabriel García Márquez"
+                  country: "Colombia"
+                books:
+                  - id: 1
+                    title: "Cien años de soledad"
+                    publishedYear: 1967
+                    genre: "Ficción"
+                    price: 25.99
+                  - id: 2
+                    title: "El amor en los tiempos del cólera"
+                    publishedYear: 1985
+                    genre: "Romance"
+                    price: 22.50
+                  - id: 3
+                    title: "Crónica de una muerte anunciada"
+                    publishedYear: 1981
+                    genre: "Ficción"
+                    price: 18.99
+                totalBooks: 3
+        '404':
+          description: Autor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                code: 404
+                message: "Autor con ID 1 no encontrado"
+
+  /books/{id}/author:
+    get:
+      tags:
+        - Relaciones
+        - Libros
+        - Autores
+      summary: Obtener el autor de un libro
+      description: Retorna la información del autor que escribió un libro específico
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del libro
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Autor del libro obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  book:
+                    $ref: '#/components/schemas/Book'
+                  author:
+                    $ref: '#/components/schemas/Author'
+              example:
+                book:
+                  id: 1
+                  title: "Cien años de soledad"
+                  publishedYear: 1967
+                author:
+                  id: 1
+                  name: "Gabriel García Márquez"
+                  country: "Colombia"
+                  biography: "Escritor colombiano, premio Nobel de Literatura 1982"
+        '404':
+          description: Libro no encontrado
+
+# ==================== COMPONENTS ====================
+components:
+  schemas:
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del autor (generado automáticamente)
+          example: 1
+        name:
+          type: string
+          description: Nombre completo del autor
+          example: "Gabriel García Márquez"
+        biography:
+          type: string
+          description: Biografía breve del autor
+          example: "Escritor colombiano, premio Nobel de Literatura 1982"
+        birthDate:
+          type: string
+          format: date
+          description: Fecha de nacimiento del autor (formato YYYY-MM-DD)
+          example: "1927-03-06"
+        country:
+          type: string
+          description: País de origen del autor
+          example: "Colombia"
+        email:
+          type: string
+          format: email
+          description: Email de contacto del autor
+          example: "garcia.marquez@example.com"
+        website:
+          type: string
+          format: uri
+          description: Sitio web oficial del autor
+          example: "https://gabrielgarciamarquez.com"
+      required:
+        - id
+        - name
+        - country
+
+    AuthorInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre completo del autor
+          example: "Gabriel García Márquez"
+          minLength: 2
+          maxLength: 100
+        biography:
+          type: string
+          description: Biografía breve del autor
+          example: "Escritor colombiano, premio Nobel de Literatura 1982"
+          maxLength: 1000
+        birthDate:
+          type: string
+          format: date
+          description: Fecha de nacimiento del autor
+          example: "1927-03-06"
+        country:
+          type: string
+          description: País de origen del autor
+          example: "Colombia"
+          minLength: 2
+          maxLength: 50
+        email:
+          type: string
+          format: email
+          description: Email de contacto del autor
+          example: "garcia.marquez@example.com"
+        website:
+          type: string
+          format: uri
+          description: Sitio web oficial del autor
+          example: "https://gabrielgarciamarquez.com"
+      required:
+        - name
+        - country
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID único del libro (generado automáticamente)
+          example: 1
+        title:
+          type: string
+          description: Título del libro
+          example: "Cien años de soledad"
+        isbn:
+          type: string
+          description: Código ISBN del libro
+          example: "978-0307474728"
+          pattern: '^(978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d{1}$'
+        publishedYear:
+          type: integer
+          description: Año de publicación
+          example: 1967
+          minimum: 1000
+          maximum: 2100
+        genre:
+          type: string
+          description: Género literario
+          example: "Ficción"
+          enum:
+            - Ficción
+            - No Ficción
+            - Poesía
+            - Drama
+            - Ciencia Ficción
+            - Fantasía
+            - Romance
+            - Thriller
+            - Historia
+            - Biografía
+        pages:
+          type: integer
+          description: Número de páginas del libro
+          example: 417
+          minimum: 1
+        language:
+          type: string
+          description: Idioma del libro
+          example: "Español"
+        price:
+          type: number
+          format: float
+          description: Precio del libro en USD
+          example: 25.99
+          minimum: 0
+        description:
+          type: string
+          description: Descripción o sinopsis del libro
+          example: "La obra maestra de Gabriel García Márquez que narra la historia de la familia Buendía"
+        authorId:
+          type: integer
+          description: ID del autor que escribió el libro (relación 1:N)
+          example: 1
+      required:
+        - id
+        - title
+        - authorId
+
+    BookInput:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del libro
+          example: "Cien años de soledad"
+          minLength: 1
+          maxLength: 200
+        isbn:
+          type: string
+          description: Código ISBN del libro
+          example: "978-0307474728"
+          pattern: '^(978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d{1}$'
+        publishedYear:
+          type: integer
+          description: Año de publicación
+          example: 1967
+          minimum: 1000
+          maximum: 2100
+        genre:
+          type: string
+          description: Género literario
+          example: "Ficción"
+          enum:
+            - Ficción
+            - No Ficción
+            - Poesía
+            - Drama
+            - Ciencia Ficción
+            - Fantasía
+            - Romance
+            - Thriller
+            - Historia
+            - Biografía
+        pages:
+          type: integer
+          description: Número de páginas del libro
+          example: 417
+          minimum: 1
+        language:
+          type: string
+          description: Idioma del libro
+          example: "Español"
+        price:
+          type: number
+          format: float
+          description: Precio del libro en USD
+          example: 25.99
+          minimum: 0
+        description:
+          type: string
+          description: Descripción o sinopsis del libro
+          example: "La obra maestra de Gabriel García Márquez"
+          maxLength: 2000
+        authorId:
+          type: integer
+          description: ID del autor que escribió el libro
+          example: 1
+      required:
+        - title
+        - authorId
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Código de error HTTP
+          example: 404
+        message:
+          type: string
+          description: Mensaje descriptivo del error
+          example: "Recurso no encontrado"
+      required:
+        - code
+        - message

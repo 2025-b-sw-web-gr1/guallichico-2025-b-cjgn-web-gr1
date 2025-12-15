@@ -1,0 +1,54 @@
+meta {
+  name: PATCH Update Book Partial
+  type: http
+  seq: 11
+}
+
+patch {
+  url: https://api.biblioteca.com/v1/books/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "price": 34.99,
+    "description": "Obra cumbre del realismo mágico latinoamericano y ganadora de múltiples premios internacionales."
+  }
+}
+
+docs {
+  # Actualizar parcialmente un libro (PATCH)
+  
+  Este endpoint permite actualizar SOLO algunos campos específicos de un libro.
+  No es necesario enviar el objeto completo.
+  
+  ## Path Parameter:
+  - id: ID del libro a actualizar
+  
+  ## Body (JSON):
+  Solo los campos que deseas actualizar
+  
+  ## Campos actualizables:
+  - title, price, description, pages, isbn, etc.
+  
+  ## Respuestas:
+  - 200: Libro actualizado exitosamente
+  - 404: Libro no encontrado
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Campos especificados fueron actualizados", function() {
+    const book = res.getBody();
+    expect(book.price).to.equal(34.99);
+  });
+}

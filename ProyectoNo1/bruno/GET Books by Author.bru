@@ -1,0 +1,100 @@
+meta {
+  name: GET Books by Author
+  type: http
+  seq: 13
+}
+
+get {
+  url: https://api.biblioteca.com/v1/authors/1/books
+  body: none
+  auth: none
+}
+
+params:query {
+  ~genre: Ficción
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Obtener todos los libros de un autor (Relación 1:N)
+  
+  **Este es el endpoint principal de la relación 1 a muchos:**
+  - 1 Autor puede tener MUCHOS Libros
+  
+  Retorna todos los libros escritos por un autor específico,
+  junto con la información del autor.
+  
+  ## Path Parameter:
+  - id: ID del autor
+  
+  ## Query Parameters opcionales:
+  - genre: Filtrar libros del autor por género
+  
+  ## Respuestas:
+  - 200: Lista de libros del autor (puede estar vacía si no tiene libros)
+  - 404: Autor no encontrado
+  
+  ## Ejemplo de respuesta:
+  ```json
+  {
+    "author": {
+      "id": 1,
+      "name": "Gabriel García Márquez",
+      "country": "Colombia"
+    },
+    "books": [
+      {
+        "id": 1,
+        "title": "Cien años de soledad",
+        "publishedYear": 1967,
+        "genre": "Ficción",
+        "price": 25.99
+      },
+      {
+        "id": 2,
+        "title": "El amor en los tiempos del cólera",
+        "publishedYear": 1985,
+        "genre": "Romance",
+        "price": 22.50
+      }
+    ],
+    "totalBooks": 2
+  }
+  ```
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response contiene información del autor", function() {
+    const response = res.getBody();
+    expect(response).to.have.property('author');
+    expect(response.author).to.have.property('id');
+    expect(response.author).to.have.property('name');
+  });
+  
+  test("Response contiene array de libros", function() {
+    const response = res.getBody();
+    expect(response).to.have.property('books');
+    expect(response.books).to.be.an('array');
+  });
+  
+  test("Response contiene total de libros", function() {
+    const response = res.getBody();
+    expect(response).to.have.property('totalBooks');
+    expect(response.totalBooks).to.be.a('number');
+    expect(response.totalBooks).to.equal(response.books.length);
+  });
+  
+  test("Todos los libros pertenecen al autor", function() {
+    const response = res.getBody();
+    response.books.forEach(book => {
+      expect(book.authorId).to.equal(response.author.id);
+    });
+  });
+}

@@ -1,0 +1,51 @@
+meta {
+  name: PATCH Update Author Partial
+  type: http
+  seq: 5
+}
+
+patch {
+  url: https://api.biblioteca.com/v1/authors/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "biography": "Escritor colombiano, premio Nobel de Literatura 1982. Creador del realismo mágico.",
+    "email": "gabo@example.com"
+  }
+}
+
+docs {
+  # Actualizar parcialmente un autor (PATCH)
+  
+  Este endpoint permite actualizar SOLO algunos campos específicos de un autor.
+  No es necesario enviar el objeto completo.
+  
+  ## Path Parameter:
+  - id: ID del autor a actualizar
+  
+  ## Body (JSON):
+  Solo los campos que deseas actualizar
+  
+  ## Respuestas:
+  - 200: Autor actualizado exitosamente
+  - 404: Autor no encontrado
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Campos especificados fueron actualizados", function() {
+    const author = res.getBody();
+    expect(author.email).to.equal("gabo@example.com");
+  });
+}

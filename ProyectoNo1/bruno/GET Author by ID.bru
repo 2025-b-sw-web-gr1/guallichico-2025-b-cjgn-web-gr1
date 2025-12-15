@@ -1,0 +1,50 @@
+meta {
+  name: GET Author by ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://api.biblioteca.com/v1/authors/1
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Obtener un autor específico por ID
+  
+  Este endpoint retorna la información completa de un autor.
+  
+  ## Path Parameter:
+  - id: ID único del autor (integer)
+  
+  ## Respuestas:
+  - 200: Autor encontrado
+  - 404: Autor no encontrado
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response es un objeto", function() {
+    expect(res.getBody()).to.be.an('object');
+  });
+  
+  test("Autor tiene todas las propiedades", function() {
+    const author = res.getBody();
+    expect(author).to.have.property('id');
+    expect(author).to.have.property('name');
+    expect(author).to.have.property('biography');
+    expect(author).to.have.property('country');
+  });
+  
+  test("ID del autor es 1", function() {
+    expect(res.getBody().id).to.equal(1);
+  });
+}

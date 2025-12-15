@@ -1,0 +1,60 @@
+meta {
+  name: PUT Update Book
+  type: http
+  seq: 10
+}
+
+put {
+  url: https://api.biblioteca.com/v1/books/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "title": "Cien años de soledad",
+    "isbn": "978-0307474728",
+    "publishedYear": 1967,
+    "genre": "Ficción",
+    "pages": 417,
+    "language": "Español",
+    "price": 29.99,
+    "description": "Obra cumbre del realismo mágico latinoamericano. Narra la historia épica de la familia Buendía a lo largo de varias generaciones.",
+    "authorId": 1
+  }
+}
+
+docs {
+  # Actualizar un libro completo (PUT)
+  
+  Este endpoint permite actualizar TODOS los campos de un libro existente.
+  Requiere enviar el objeto completo.
+  
+  ## Path Parameter:
+  - id: ID del libro a actualizar
+  
+  ## Body (JSON):
+  Todos los campos del libro (excepto id)
+  
+  ## Respuestas:
+  - 200: Libro actualizado exitosamente
+  - 404: Libro no encontrado
+  - 400: Datos inválidos
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Libro fue actualizado", function() {
+    const book = res.getBody();
+    expect(book.price).to.equal(29.99);
+    expect(book.description).to.include('realismo mágico');
+  });
+}

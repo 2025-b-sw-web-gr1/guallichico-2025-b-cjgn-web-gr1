@@ -1,0 +1,39 @@
+meta {
+  name: DELETE Book
+  type: http
+  seq: 12
+}
+
+delete {
+  url: https://api.biblioteca.com/v1/books/1
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Eliminar un libro
+  
+  Este endpoint elimina un libro de la base de datos.
+  El autor asociado NO será eliminado.
+  
+  ## Path Parameter:
+  - id: ID del libro a eliminar
+  
+  ## Respuestas:
+  - 204: Libro eliminado exitosamente (sin contenido)
+  - 404: Libro no encontrado
+}
+
+tests {
+  test("Status code es 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+  
+  test("Response body está vacío", function() {
+    expect(res.getBody()).to.be.empty;
+  });
+}

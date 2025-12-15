@@ -1,0 +1,77 @@
+meta {
+  name: POST Create Book
+  type: http
+  seq: 9
+}
+
+post {
+  url: https://api.biblioteca.com/v1/books
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "title": "Cien años de soledad",
+    "isbn": "978-0307474728",
+    "publishedYear": 1967,
+    "genre": "Ficción",
+    "pages": 417,
+    "language": "Español",
+    "price": 25.99,
+    "description": "La obra maestra de Gabriel García Márquez que narra la historia de la familia Buendía en el pueblo ficticio de Macondo",
+    "authorId": 1
+  }
+}
+
+docs {
+  # Crear un nuevo libro
+  
+  Este endpoint permite registrar un nuevo libro en la biblioteca.
+  El libro debe estar asociado a un autor existente (authorId).
+  
+  ## Body (JSON):
+  ```json
+  {
+    "title": "string (requerido)",
+    "isbn": "string (opcional, formato 978-X-XXXXX-XXX-X)",
+    "publishedYear": number (opcional, 1000-2100),
+    "genre": "string (opcional, enum)",
+    "pages": number (opcional, min 1),
+    "language": "string (opcional)",
+    "price": number (opcional, min 0)",
+    "description": "string (opcional)",
+    "authorId": number (requerido)
+  }
+  ```
+  
+  ## Respuestas:
+  - 201: Libro creado exitosamente
+  - 400: Datos inválidos
+  - 404: Autor no encontrado
+}
+
+tests {
+  test("Status code es 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response contiene el libro creado", function() {
+    const book = res.getBody();
+    expect(book).to.have.property('id');
+    expect(book.title).to.equal("Cien años de soledad");
+  });
+  
+  test("Libro tiene ID generado", function() {
+    expect(res.getBody().id).to.be.a('number');
+  });
+  
+  test("Libro está asociado al autor correcto", function() {
+    expect(res.getBody().authorId).to.equal(1);
+  });
+}

@@ -1,0 +1,56 @@
+meta {
+  name: GET Book by ID
+  type: http
+  seq: 8
+}
+
+get {
+  url: https://api.biblioteca.com/v1/books/1
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Obtener un libro específico por ID
+  
+  Este endpoint retorna la información completa de un libro.
+  
+  ## Path Parameter:
+  - id: ID único del libro (integer)
+  
+  ## Respuestas:
+  - 200: Libro encontrado
+  - 404: Libro no encontrado
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response es un objeto", function() {
+    expect(res.getBody()).to.be.an('object');
+  });
+  
+  test("Libro tiene todas las propiedades requeridas", function() {
+    const book = res.getBody();
+    expect(book).to.have.property('id');
+    expect(book).to.have.property('title');
+    expect(book).to.have.property('authorId');
+  });
+  
+  test("ID del libro es 1", function() {
+    expect(res.getBody().id).to.equal(1);
+  });
+  
+  test("Libro tiene ISBN válido", function() {
+    const book = res.getBody();
+    if (book.isbn) {
+      expect(book.isbn).to.match(/^(978|979)-\d{1,5}-\d{1,7}-\d{1,7}-\d{1}$/);
+    }
+  });
+}

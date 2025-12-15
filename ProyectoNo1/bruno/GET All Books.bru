@@ -1,0 +1,66 @@
+meta {
+  name: GET All Books
+  type: http
+  seq: 7
+}
+
+get {
+  url: https://api.biblioteca.com/v1/books
+  body: none
+  auth: none
+}
+
+params:query {
+  ~genre: Ficción
+  ~language: Español
+  ~minPrice: 10.0
+  ~maxPrice: 50.0
+  ~limit: 20
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Obtener todos los libros
+  
+  Este endpoint retorna la lista completa de libros registrados en la biblioteca.
+  
+  ## Query Parameters opcionales:
+  - genre: Filtrar por género literario
+  - language: Filtrar por idioma
+  - minPrice: Precio mínimo
+  - maxPrice: Precio máximo
+  - limit: Limitar número de resultados (max 100)
+  
+  ## Ejemplo de uso:
+  GET /books?genre=Ficción&language=Español&minPrice=10&maxPrice=50
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response es un array", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+  
+  test("Libros tienen propiedades requeridas", function() {
+    const books = res.getBody();
+    if (books.length > 0) {
+      expect(books[0]).to.have.property('id');
+      expect(books[0]).to.have.property('title');
+      expect(books[0]).to.have.property('authorId');
+    }
+  });
+  
+  test("Libros tienen precio válido", function() {
+    const books = res.getBody();
+    if (books.length > 0) {
+      expect(books[0].price).to.be.a('number');
+      expect(books[0].price).to.be.at.least(0);
+    }
+  });
+}

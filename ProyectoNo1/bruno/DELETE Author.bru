@@ -1,0 +1,41 @@
+meta {
+  name: DELETE Author
+  type: http
+  seq: 6
+}
+
+delete {
+  url: https://api.biblioteca.com/v1/authors/1
+  body: none
+  auth: none
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Eliminar un autor
+  
+  Este endpoint elimina un autor de la base de datos.
+  
+  **⚠️ ADVERTENCIA:** También eliminará todos los libros asociados al autor.
+  
+  ## Path Parameter:
+  - id: ID del autor a eliminar
+  
+  ## Respuestas:
+  - 204: Autor eliminado exitosamente (sin contenido)
+  - 404: Autor no encontrado
+  - 409: Conflicto - El autor tiene libros asociados
+}
+
+tests {
+  test("Status code es 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+  
+  test("Response body está vacío", function() {
+    expect(res.getBody()).to.be.empty;
+  });
+}

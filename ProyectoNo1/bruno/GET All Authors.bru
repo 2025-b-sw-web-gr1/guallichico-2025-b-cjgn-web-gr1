@@ -1,0 +1,52 @@
+meta {
+  name: GET All Authors
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://api.biblioteca.com/v1/authors
+  body: none
+  auth: none
+}
+
+params:query {
+  ~limit: 10
+  ~country: Colombia
+}
+
+headers {
+  Accept: application/json
+}
+
+docs {
+  # Obtener todos los autores
+  
+  Este endpoint retorna la lista completa de autores registrados en la biblioteca.
+  
+  ## Query Parameters opcionales:
+  - country: Filtrar por país
+  - limit: Limitar número de resultados (max 100)
+  
+  ## Ejemplo de uso:
+  GET /authors?country=Colombia&limit=10
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response es un array", function() {
+    expect(res.getBody()).to.be.an('array');
+  });
+  
+  test("Autores tienen propiedades requeridas", function() {
+    const authors = res.getBody();
+    if (authors.length > 0) {
+      expect(authors[0]).to.have.property('id');
+      expect(authors[0]).to.have.property('name');
+      expect(authors[0]).to.have.property('country');
+    }
+  });
+}

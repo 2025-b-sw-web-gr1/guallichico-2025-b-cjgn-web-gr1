@@ -1,0 +1,57 @@
+meta {
+  name: PUT Update Author
+  type: http
+  seq: 4
+}
+
+put {
+  url: https://api.biblioteca.com/v1/authors/1
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "Gabriel García Márquez",
+    "biography": "Escritor colombiano, premio Nobel de Literatura 1982. Autor de Cien años de soledad y El amor en los tiempos del cólera.",
+    "birthDate": "1927-03-06",
+    "country": "Colombia",
+    "email": "garcia.marquez@example.com",
+    "website": "https://gabrielgarciamarquez.com"
+  }
+}
+
+docs {
+  # Actualizar un autor completo (PUT)
+  
+  Este endpoint permite actualizar TODOS los campos de un autor existente.
+  Requiere enviar el objeto completo.
+  
+  ## Path Parameter:
+  - id: ID del autor a actualizar
+  
+  ## Body (JSON):
+  Todos los campos del autor (excepto id)
+  
+  ## Respuestas:
+  - 200: Autor actualizado exitosamente
+  - 404: Autor no encontrado
+  - 400: Datos inválidos
+}
+
+tests {
+  test("Status code es 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Autor fue actualizado", function() {
+    const author = res.getBody();
+    expect(author).to.have.property('biography');
+    expect(author.biography).to.include('Cien años de soledad');
+  });
+}

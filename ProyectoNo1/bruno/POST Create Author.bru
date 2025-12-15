@@ -1,0 +1,65 @@
+meta {
+  name: POST Create Author
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://api.biblioteca.com/v1/authors
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "Gabriel García Márquez",
+    "biography": "Escritor colombiano, premio Nobel de Literatura 1982",
+    "birthDate": "1927-03-06",
+    "country": "Colombia",
+    "email": "garcia.marquez@example.com",
+    "website": "https://gabrielgarciamarquez.com"
+  }
+}
+
+docs {
+  # Crear un nuevo autor
+  
+  Este endpoint permite registrar un nuevo autor en la biblioteca.
+  
+  ## Body (JSON):
+  ```json
+  {
+    "name": "string (requerido)",
+    "biography": "string (opcional)",
+    "birthDate": "YYYY-MM-DD (opcional)",
+    "country": "string (requerido)",
+    "email": "string (opcional)",
+    "website": "string (opcional)"
+  }
+  ```
+  
+  ## Respuestas:
+  - 201: Autor creado exitosamente
+  - 400: Datos inválidos
+}
+
+tests {
+  test("Status code es 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response contiene el autor creado", function() {
+    const author = res.getBody();
+    expect(author).to.have.property('id');
+    expect(author.name).to.equal("Gabriel García Márquez");
+  });
+  
+  test("Autor tiene ID generado", function() {
+    expect(res.getBody().id).to.be.a('number');
+  });
+}
