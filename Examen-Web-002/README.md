@@ -63,6 +63,3 @@ curl http://localhost:3000/teams/1/players
 - Entidades y relación 1 a muchos bien definidas.
 - Endpoints RESTful implementados y funcionales.
 - README claro, con instrucciones y ejemplos.
-
----
-**Recuerda:** Puedes modificar los ejemplos según los datos de tu base. Si tienes dudas, consulta con tu docente.
