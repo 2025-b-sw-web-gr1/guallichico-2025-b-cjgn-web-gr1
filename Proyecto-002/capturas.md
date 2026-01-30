@@ -4,24 +4,16 @@ A continuación se muestran capturas de pantalla y ejemplos que demuestran el fu
 
 ## 1. Acceso a Swagger
 
-![Swagger UI](./img/swagger-ui.png)
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/e176e9f9-68e4-405e-a463-94b632430427" />
 *Vista de la interfaz Swagger mostrando los endpoints documentados.*
 
-## 2. Ejemplo de Endpoint: Listar Equipos
+## 2. Teams
 
-![GET Teams](./img/get-teams.png)
-*Ejemplo de respuesta al consultar `GET /teams`.*
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/21a3a0a7-6d79-47d3-9359-2a178676543b" />
 
-## 3. Ejemplo de Endpoint: Crear Jugador
+## 3. Players
 
-![POST Player](./img/post-player.png)
-*Formulario para crear un nuevo jugador usando Swagger UI.*
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/3ffed307-2695-40e6-9634-10c3cdddb0d5" />
 
-## 4. Detalle de un Equipo
 
-![Team Detail](./img/team-detail.png)
-*Visualización de los datos de un equipo específico.*
 
----
-
-> Puedes agregar tus propias capturas en la carpeta `img/` y actualizar las rutas en este archivo según tus necesidades.
